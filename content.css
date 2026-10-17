@@ -1,4 +1,6 @@
 /* Dedicated shelves can be hidden before their links are populated. */
+[data-disable-shorts-hidden],
+ytd-rich-section-renderer:has(ytd-reel-shelf-renderer, ytd-rich-shelf-renderer[is-shorts], ytd-playables-shelf-renderer),
 ytd-reel-shelf-renderer,
 ytd-rich-shelf-renderer[is-shorts],
 ytm-reel-shelf-renderer,
