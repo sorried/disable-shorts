@@ -1,0 +1,13 @@
+{
+  "name": "disable-shorts",
+  "version": "1.0.0",
+  "private": true,
+  "license": "GPL-3.0-only",
+  "scripts": {
+    "test": "playwright test",
+    "check": "node --check content.js && node --check navigation.js && node --check tests/extension.spec.js"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.1"
+  }
+}
