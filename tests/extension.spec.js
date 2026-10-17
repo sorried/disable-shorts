@@ -1,7 +1,8 @@
-const { test, expect } = require("@playwright/test");
+const { test, expect, chromium } = require("@playwright/test");
 const fs = require("node:fs");
 const path = require("node:path");
 const vm = require("node:vm");
+const os = require("node:os");
 
 const root = path.resolve(__dirname, "..");
 const manifest = JSON.parse(fs.readFileSync(path.join(root, "manifest.json"), "utf8"));
@@ -25,6 +26,31 @@ test("manifest uses local scripts without extra permissions", () => {
   expect(manifest.content_scripts[0].run_at).toBe("document_start");
   for (const filename of [...manifest.content_scripts[0].css, ...manifest.content_scripts[0].js]) {
     expect(fs.existsSync(path.join(root, filename))).toBe(true);
+  }
+});
+
+test("loads the unpacked extension and injects scripts automatically", async () => {
+  const profile = fs.mkdtempSync(path.join(os.tmpdir(), "disable-shorts-"));
+  let context;
+  try {
+    context = await chromium.launchPersistentContext(profile, {
+      channel: "chromium",
+      headless: true,
+      args: [`--disable-extensions-except=${root}`, `--load-extension=${root}`],
+    });
+    await context.route("https://www.youtube.com/**", (route) => route.fulfill({
+      contentType: "text/html",
+      body: '<!doctype html><ytd-video-renderer id="blocked"><a href="/shorts/123">clip</a></ytd-video-renderer><a id="normal" href="/watch?v=123">video</a>',
+    }));
+    const page = await context.newPage();
+    await page.goto("https://www.youtube.com/");
+    await expect(page.locator("#blocked")).toBeHidden();
+    await expect(page.locator("#normal")).toBeVisible();
+    await page.goto("https://www.youtube.com/playables/123");
+    await page.waitForURL("https://www.youtube.com/");
+  } finally {
+    if (context) await context.close();
+    fs.rmSync(profile, { recursive: true, force: true });
   }
 });
 
