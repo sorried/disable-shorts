@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "disable shorts and playables",
+  "version": "1.0.0",
+  "description": "Hides YouTube Shorts and Playables from navigation, feeds and search.",
+  "minimum_chrome_version": "105",
+  "content_scripts": [
+    {
+      "matches": ["https://www.youtube.com/*", "https://m.youtube.com/*", "https://youtube.com/*"],
+      "css": ["content.css"],
+      "run_at": "document_start"
+    }
+  ]
+}

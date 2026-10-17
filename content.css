@@ -1,0 +1,12 @@
+/* Dedicated shelves can be hidden before their links are populated. */
+ytd-reel-shelf-renderer,
+ytd-rich-shelf-renderer[is-shorts],
+ytm-reel-shelf-renderer,
+ytm-shorts-lockup-view-model,
+ytd-shorts,
+ytd-playables-shelf-renderer,
+ytd-rich-shelf-renderer[is-playables],
+ytd-playable-item-renderer,
+ytm-playables-shelf-renderer {
+  display: none !important;
+}
