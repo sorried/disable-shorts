@@ -8,7 +8,7 @@
     {
       "matches": ["https://www.youtube.com/*", "https://m.youtube.com/*", "https://youtube.com/*"],
       "css": ["content.css"],
-      "js": ["content.js"],
+      "js": ["navigation.js", "content.js"],
       "run_at": "document_start"
     }
   ]
