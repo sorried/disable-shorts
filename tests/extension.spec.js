@@ -8,7 +8,7 @@ const manifest = JSON.parse(fs.readFileSync(path.join(root, "manifest.json"), "u
 
 async function openFixture(page, markup) {
   await page.route("https://www.youtube.com/**", (route) => route.fulfill({
-    contentType: "text/html", body: `<!doctype html><html><head></head><body>${markup}</body></html>`,
+    contentType: "text/html; charset=utf-8", body: `<!doctype html><html><head><meta charset="utf-8"></head><body>${markup}</body></html>`,
   }));
   await page.goto("https://www.youtube.com/");
   for (const stylesheet of manifest.content_scripts[0].css) {
@@ -64,6 +64,19 @@ test("filters lazy content and restores recycled cards", async ({ page }) => {
     card.innerHTML = '<a href="/watch?v=3">normal video</a>';
   });
   await expect(page.locator("#lazy")).toBeVisible();
+});
+
+test("hides navigation entries without href in English and Russian", async ({ page }) => {
+  await openFixture(page, `
+    <ytd-guide-entry-renderer id="shorts"><a title="Shorts" role="link">shorts</a></ytd-guide-entry-renderer>
+    <ytd-mini-guide-entry-renderer id="playables"><a title="Playables">playables</a></ytd-mini-guide-entry-renderer>
+    <ytd-guide-entry-renderer id="russian"><a title="Игры">игры</a></ytd-guide-entry-renderer>
+    <ytd-video-renderer id="video"><a href="/watch?v=1" title="Shorts">review</a></ytd-video-renderer>
+  `);
+  for (const id of ["shorts", "playables", "russian"]) {
+    await expect(page.locator(`#${id}`)).toBeHidden();
+  }
+  await expect(page.locator("#video")).toBeVisible();
 });
 
 test("navigation redirects only blocked routes, including internal transitions", () => {

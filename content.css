@@ -1,5 +1,6 @@
 /* Dedicated shelves can be hidden before their links are populated. */
 [data-disable-shorts-hidden],
+:is(ytd-guide-entry-renderer, ytd-mini-guide-entry-renderer):has(a:is([title="Shorts" i], [title="Playables" i], [title="Игры" i], [title="Мини-игры" i], [title="Шортсы" i])),
 ytd-rich-section-renderer:has(ytd-reel-shelf-renderer, ytd-rich-shelf-renderer[is-shorts], ytd-playables-shelf-renderer),
 ytd-reel-shelf-renderer,
 ytd-rich-shelf-renderer[is-shorts],
