@@ -1,5 +1,6 @@
 "use strict";
 
+const extensionApi = typeof browser !== "undefined" ? browser : chrome;
 const enabledInput = document.getElementById("enabled");
 const statusLabel = document.getElementById("status");
 
@@ -8,7 +9,7 @@ function render(enabled) {
   statusLabel.textContent = enabled ? "включено" : "выключено";
 }
 
-chrome.storage.local.get({ enabled: true }).then(({ enabled }) => {
+extensionApi.storage.local.get({ enabled: true }).then(({ enabled }) => {
   render(enabled !== false);
   enabledInput.disabled = false;
 }).catch(() => {
@@ -19,7 +20,7 @@ enabledInput.addEventListener("change", async () => {
   const enabled = enabledInput.checked;
   enabledInput.disabled = true;
   try {
-    await chrome.storage.local.set({ enabled });
+    await extensionApi.storage.local.set({ enabled });
     render(enabled);
   } catch {
     enabledInput.checked = !enabled;
@@ -29,6 +30,6 @@ enabledInput.addEventListener("change", async () => {
   }
 });
 
-chrome.storage.onChanged.addListener((changes, area) => {
+extensionApi.storage.onChanged.addListener((changes, area) => {
   if (area === "local" && changes.enabled) render(changes.enabled.newValue !== false);
 });

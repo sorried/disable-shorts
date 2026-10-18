@@ -1,3 +1,4 @@
+const extensionApi = typeof browser !== "undefined" ? browser : chrome;
 const shortsSettings = {
   enabled: false,
   ready: null,
@@ -15,13 +16,13 @@ const shortsSettings = {
     document.documentElement?.toggleAttribute("data-disable-shorts-enabled", shortsSettings.enabled);
     document.dispatchEvent(new Event("disable-shorts-settings"));
   }
-  chrome.storage.onChanged.addListener((changes, area) => {
+  extensionApi.storage.onChanged.addListener((changes, area) => {
     if (area === "local" && changes.enabled) {
       revision++;
       apply(changes.enabled.newValue);
     }
   });
-  shortsSettings.ready = chrome.storage.local.get({ enabled: true }).then((settings) => {
+  shortsSettings.ready = extensionApi.storage.local.get({ enabled: true }).then((settings) => {
     if (revision === 0) apply(settings.enabled);
   }).catch((error) => {
     console.error("Could not load extension settings", error);

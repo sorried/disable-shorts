@@ -3,6 +3,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const vm = require("node:vm");
 const os = require("node:os");
+const { execFileSync } = require("node:child_process");
 
 const root = path.resolve(__dirname, "..");
 const manifest = JSON.parse(fs.readFileSync(path.join(root, "manifest.json"), "utf8"));
@@ -18,6 +19,7 @@ async function openFixture(page, markup) {
       local: { get: async () => ({ enabled: true }) },
       onChanged: { addListener: (listener) => listeners.push(listener) },
     } };
+    window.browser = window.chrome;
     window.setBlocking = (enabled) => listeners.forEach((listener) => listener({ enabled: { newValue: enabled } }, "local"));
   });
   for (const stylesheet of manifest.content_scripts[0].css) {
@@ -33,7 +35,7 @@ test("manifest declares settings, popup and raster icons", () => {
   expect(manifest.permissions).toEqual(["storage"]);
   expect(manifest.author).toBe("github.com/sorried");
   expect(manifest.homepage_url).toBe("https://github.com/sorried");
-  expect(manifest.version).toBe("1.0.0");
+  expect(manifest.version).toBe("1.0.0.1");
   expect(fs.existsSync(path.join(root, manifest.action.default_popup))).toBe(true);
   for (const [size, filename] of Object.entries(manifest.icons)) {
     const png = fs.readFileSync(path.join(root, filename));
@@ -46,7 +48,56 @@ test("manifest declares settings, popup and raster icons", () => {
   }
 });
 
-test("loads the unpacked extension and injects scripts automatically", async () => {
+test("builds isolated chromium and firefox archives", async ({ browserName }) => {
+  test.skip(browserName !== "chromium", "packaging is browser-independent");
+  execFileSync(process.execPath, [path.join(root, "scripts/package.js")]);
+  for (const target of ["chromium", "firefox"]) {
+    const archive = path.join(root, "dist", `disable-shorts-v${manifest.version}-${target}.zip`);
+    execFileSync("unzip", ["-t", archive]);
+    const packaged = JSON.parse(execFileSync("unzip", ["-p", archive, "manifest.json"], { encoding: "utf8" }));
+    const entries = execFileSync("unzip", ["-Z1", archive], { encoding: "utf8" }).trim().split("\n");
+    expect(packaged.version).toBe(manifest.version);
+    expect(entries.some((entry) => /^(node_modules|tests|scripts|\.git)\//.test(entry))).toBe(false);
+    for (const filename of [...packaged.content_scripts[0].js, ...packaged.content_scripts[0].css, packaged.action.default_popup, ...Object.values(packaged.icons)]) {
+      expect(entries).toContain(filename);
+    }
+    if (target === "firefox") {
+      expect(packaged.minimum_chrome_version).toBeUndefined();
+      expect(packaged.browser_specific_settings.gecko.strict_min_version).toBe("142.0");
+      expect(packaged.browser_specific_settings.gecko.data_collection_permissions.required).toEqual(["none"]);
+    } else {
+      expect(packaged.browser_specific_settings).toBeUndefined();
+    }
+  }
+});
+
+test("popup works with browser namespace only", async ({ page }) => {
+  await page.route("https://popup.test/**", (route) => {
+    const filename = new URL(route.request().url()).pathname.slice(1) || "popup.html";
+    const types = { ".html": "text/html; charset=utf-8", ".js": "text/javascript", ".css": "text/css" };
+    return route.fulfill({ contentType: types[path.extname(filename)], body: fs.readFileSync(path.join(root, filename)) });
+  });
+  await page.addInitScript(() => {
+    let enabled = true;
+    window.browser = { storage: {
+      local: {
+        get: async () => ({ enabled }),
+        set: async (settings) => { enabled = settings.enabled; },
+      },
+      onChanged: { addListener() {} },
+    } };
+  });
+  await page.goto("https://popup.test/popup.html");
+  await expect(page.getByRole("switch")).toBeEnabled();
+  await expect(page.getByRole("switch")).toBeChecked();
+  await page.getByRole("switch").uncheck();
+  await expect(page.getByRole("status")).toHaveText("выключено");
+  await page.getByRole("switch").check();
+  await expect(page.getByRole("status")).toHaveText("включено");
+});
+
+test("loads the unpacked extension and injects scripts automatically", async ({ browserName }) => {
+  test.skip(browserName !== "chromium", "unpacked extension integration uses chromium; firefox fixtures run separately");
   const profile = fs.mkdtempSync(path.join(os.tmpdir(), "disable-shorts-"));
   let context;
   try {
