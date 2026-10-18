@@ -1,6 +1,11 @@
 const shortsSettings = {
   enabled: false,
   ready: null,
+  blockedpath(pathname) {
+    return /^\/(shorts|playables|playable)(\/|$)/i.test(pathname)
+      || /^\/feed\/playables(\/|$)/i.test(pathname)
+      || /^\/(?:@[^/]+|channel\/[^/]+|c\/[^/]+|user\/[^/]+)\/shorts\/?$/i.test(pathname);
+  },
 };
 
 (() => {

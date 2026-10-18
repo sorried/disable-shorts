@@ -146,12 +146,19 @@ test("hides navigation entries without href in English and Russian", async ({ pa
 
 test("navigation redirects only blocked routes, including internal transitions", () => {
   const source = fs.readFileSync(path.join(root, "navigation.js"), "utf8");
+  const settingsSource = fs.readFileSync(path.join(root, "settings.js"), "utf8");
+  const settingsContext = vm.createContext({
+    chrome: { storage: { onChanged: { addListener() {} }, local: { get: () => new Promise(() => {}) } } },
+    document: { addEventListener() {} },
+  });
+  vm.runInContext(settingsSource, settingsContext);
+  const blockedpath = vm.runInContext("shortsSettings.blockedpath", settingsContext);
   for (const pathname of ["/shorts/123", "/shorts", "/playables", "/playable/42", "/feed/playables", "/@name/shorts", "/channel/abc/shorts", "/watch", "/gaming", "/shortstory"]) {
     const redirects = [];
     const listeners = {};
     const location = { pathname, replace: (url) => redirects.push(url) };
     const events = { addEventListener: (event, callback) => { listeners[event] = callback; } };
-    vm.runInNewContext(source, { location, document: events, window: events, shortsSettings: { enabled: true, ready: { then: (callback) => callback() } } });
+    vm.runInNewContext(source, { location, document: events, window: events, shortsSettings: { blockedpath, enabled: true, ready: { then: (callback) => callback() } } });
     expect(redirects).toEqual(["/watch", "/gaming", "/shortstory"].includes(pathname) ? [] : ["/"]);
     location.pathname = "/shorts/next";
     for (const event of ["yt-navigate-finish", "yt-page-data-updated", "popstate"]) {

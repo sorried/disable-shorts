@@ -15,7 +15,7 @@
   const navigation = "ytd-guide-entry-renderer,ytd-mini-guide-entry-renderer,ytm-pivot-bar-item-renderer,yt-tab-shape,tp-yt-paper-tab,ytm-tab-renderer";
   const navigationLabel = /^(shorts|playables|шортсы|игры в браузере|мини-игры)$/i;
 
-  function blockedLink(anchor) {
+  function blockedlink(anchor) {
     let url;
     try {
       url = new URL(anchor.getAttribute("href"), location.href);
@@ -25,9 +25,7 @@
     if (!["www.youtube.com", "m.youtube.com", "youtube.com"].includes(url.hostname)) {
       return false;
     }
-    return /^\/(shorts|playables|playable)(\/|$)/i.test(url.pathname)
-      || /^\/feed\/playables(\/|$)/i.test(url.pathname)
-      || /^\/(?:@[^/]+|channel\/[^/]+|c\/[^/]+|user\/[^/]+)\/shorts\/?$/i.test(url.pathname);
+    return shortsSettings.blockedpath(url.pathname);
   }
 
   function clean(root) {
@@ -54,7 +52,7 @@
           navigationLabel.test(element.getAttribute("title") || "")
           || navigationLabel.test(element.getAttribute("aria-label") || ""))
       );
-      candidate.toggleAttribute(hiddenAttribute, blockedNavigation || [...links].some(blockedLink));
+      candidate.toggleAttribute(hiddenAttribute, blockedNavigation || [...links].some(blockedlink));
     }
   }
 
