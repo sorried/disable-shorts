@@ -5,7 +5,8 @@
   "license": "GPL-3.0-only",
   "scripts": {
     "test": "playwright test",
-    "check": "node --check content.js && node --check navigation.js && node --check tests/extension.spec.js"
+    "check": "node --check content.js && node --check navigation.js && node --check settings.js && node --check popup.js && node --check scripts/icons.js && node --check tests/extension.spec.js",
+    "icons": "node scripts/icons.js"
   },
   "devDependencies": {
     "@playwright/test": "^1.64.1"
