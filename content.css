@@ -1,4 +1,5 @@
 /* Dedicated shelves can be hidden before their links are populated. */
+:root[data-disable-shorts-enabled] :is(
 [data-disable-shorts-hidden],
 :is(ytd-guide-entry-renderer, ytd-mini-guide-entry-renderer):has([aria-label="Shorts" i], [aria-label="Playables" i], [title="Игры в браузере" i]),
 :is(grid-shelf-view-model, ytd-shelf-renderer, ytd-rich-shelf-renderer, ytd-rich-section-renderer):has(ytm-shorts-lockup-view-model-v2, ytm-shorts-lockup-view-model, yt-shorts-lockup-view-model, ytd-reel-shelf-renderer, mini-game-card-view-model, ytd-mini-game-card-view-model),
@@ -17,6 +18,6 @@ ytd-shorts,
 ytd-playables-shelf-renderer,
 ytd-rich-shelf-renderer[is-playables],
 ytd-playable-item-renderer,
-ytm-playables-shelf-renderer {
+ytm-playables-shelf-renderer) {
   display: none !important;
 }

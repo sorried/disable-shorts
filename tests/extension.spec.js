@@ -12,6 +12,14 @@ async function openFixture(page, markup) {
     contentType: "text/html; charset=utf-8", body: `<!doctype html><html><head><meta charset="utf-8"></head><body>${markup}</body></html>`,
   }));
   await page.goto("https://www.youtube.com/");
+  await page.evaluate(() => {
+    const listeners = [];
+    window.chrome = { storage: {
+      local: { get: async () => ({ enabled: true }) },
+      onChanged: { addListener: (listener) => listeners.push(listener) },
+    } };
+    window.setBlocking = (enabled) => listeners.forEach((listener) => listener({ enabled: { newValue: enabled } }, "local"));
+  });
   for (const stylesheet of manifest.content_scripts[0].css) {
     await page.addStyleTag({ path: path.join(root, stylesheet) });
   }
@@ -22,7 +30,7 @@ async function openFixture(page, markup) {
 
 test("manifest uses local scripts without extra permissions", () => {
   expect(manifest.manifest_version).toBe(3);
-  expect(manifest.permissions).toBeUndefined();
+  expect(manifest.permissions).toEqual(["storage"]);
   expect(manifest.author).toBe("github.com/sorried");
   expect(manifest.homepage_url).toBe("https://github.com/sorried");
   expect(manifest.content_scripts[0].run_at).toBe("document_start");
@@ -114,7 +122,7 @@ test("navigation redirects only blocked routes, including internal transitions",
     const listeners = {};
     const location = { pathname, replace: (url) => redirects.push(url) };
     const events = { addEventListener: (event, callback) => { listeners[event] = callback; } };
-    vm.runInNewContext(source, { location, document: events, window: events });
+    vm.runInNewContext(source, { location, document: events, window: events, shortsSettings: { enabled: true, ready: { then: (callback) => callback() } } });
     expect(redirects).toEqual(["/watch", "/gaming", "/shortstory"].includes(pathname) ? [] : ["/"]);
     location.pathname = "/shorts/next";
     for (const event of ["yt-navigate-finish", "yt-page-data-updated", "popstate"]) {
@@ -123,6 +131,20 @@ test("navigation redirects only blocked routes, including internal transitions",
       expect(redirects.length).toBe(before + 1);
     }
   }
+});
+
+test("toggle restores content and filters new content when enabled again", async ({ page }) => {
+  await openFixture(page, '<ytd-video-renderer id="clip"><a href="/shorts/1">clip</a></ytd-video-renderer><ytd-reel-shelf-renderer id="shelf">shorts</ytd-reel-shelf-renderer>');
+  await expect(page.locator("#clip")).toBeHidden();
+  await page.evaluate(() => window.setBlocking(false));
+  await expect(page.locator("#clip")).toBeVisible();
+  await expect(page.locator("#shelf")).toBeVisible();
+  await page.evaluate(() => document.body.insertAdjacentHTML("beforeend", '<ytd-video-renderer id="new"><a href="/playables/1">game</a></ytd-video-renderer>'));
+  await expect(page.locator("#new")).toBeVisible();
+  await page.evaluate(() => window.setBlocking(true));
+  await expect(page.locator("#clip")).toBeHidden();
+  await expect(page.locator("#new")).toBeHidden();
+  await expect(page.locator("#shelf")).toBeHidden();
 });
 
 test("hides modern search shelves and playable libraries without hiding regular results", async ({ page }) => {

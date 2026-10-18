@@ -31,6 +31,7 @@
   }
 
   function clean(root) {
+    if (!shortsSettings.enabled) return;
     const candidates = new Set(root.querySelectorAll(`[${hiddenAttribute}]`));
     for (const entry of root.querySelectorAll(navigation)) candidates.add(entry);
     if (root.matches?.(navigation)) candidates.add(root);
@@ -83,4 +84,5 @@
   });
   observer.observe(document, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ["href", "title", "aria-label"] });
   clean(document);
+  document.addEventListener("disable-shorts-settings", () => clean(document));
 })();
