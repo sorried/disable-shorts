@@ -9,8 +9,11 @@
     "ytm-shorts-lockup-view-model", "ytd-reel-item-renderer",
     "ytm-video-with-context-renderer", "ytm-compact-video-renderer",
     "ytm-pivot-bar-item-renderer", "yt-tab-shape", "tp-yt-paper-tab",
-    "ytm-tab-renderer", "ytd-playable-item-renderer"
+    "ytm-tab-renderer", "ytd-playable-item-renderer",
+    "ytm-shorts-lockup-view-model-v2", "ytd-mini-game-card-view-model", "mini-game-card-view-model"
   ].join(",");
+  const navigation = "ytd-guide-entry-renderer,ytd-mini-guide-entry-renderer,ytm-pivot-bar-item-renderer,yt-tab-shape,tp-yt-paper-tab,ytm-tab-renderer";
+  const navigationLabel = /^(shorts|playables|шортсы|игры в браузере|мини-игры)$/i;
 
   function blockedLink(anchor) {
     let url;
@@ -29,6 +32,8 @@
 
   function clean(root) {
     const candidates = new Set(root.querySelectorAll(`[${hiddenAttribute}]`));
+    for (const entry of root.querySelectorAll(navigation)) candidates.add(entry);
+    if (root.matches?.(navigation)) candidates.add(root);
     const anchors = [...root.querySelectorAll("a[href]")];
     if (root.matches?.("a[href]")) anchors.push(root);
     if (root.hasAttribute?.(hiddenAttribute)) candidates.add(root);
@@ -42,7 +47,13 @@
     for (const candidate of candidates) {
       const links = candidate.matches("a[href]")
         ? [candidate] : candidate.querySelectorAll("a[href]");
-      candidate.toggleAttribute(hiddenAttribute, [...links].some(blockedLink));
+      const blockedNavigation = candidate.matches(navigation) && (
+        navigationLabel.test(candidate.textContent.trim())
+        || [...candidate.querySelectorAll("[title],[aria-label]")].some((element) =>
+          navigationLabel.test(element.getAttribute("title") || "")
+          || navigationLabel.test(element.getAttribute("aria-label") || ""))
+      );
+      candidate.toggleAttribute(hiddenAttribute, blockedNavigation || [...links].some(blockedLink));
     }
   }
 
@@ -50,7 +61,8 @@
   let scheduled = false;
   const observer = new MutationObserver((mutations) => {
     for (const mutation of mutations) {
-      if (mutation.type === "attributes") pending.add(mutation.target);
+      if (mutation.type === "characterData") pending.add(mutation.target.parentElement);
+      else if (mutation.type === "attributes") pending.add(mutation.target);
       else {
         pending.add(mutation.target);
         for (const node of mutation.addedNodes) {
@@ -63,12 +75,12 @@
       requestAnimationFrame(() => {
         scheduled = false;
         for (const root of pending) {
-          if (root.isConnected) clean(root);
+          if (root?.isConnected) clean(root);
         }
         pending.clear();
       });
     }
   });
-  observer.observe(document, { subtree: true, childList: true, attributes: true, attributeFilter: ["href"] });
+  observer.observe(document, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ["href", "title", "aria-label"] });
   clean(document);
 })();

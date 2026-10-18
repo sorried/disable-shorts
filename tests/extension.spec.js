@@ -122,3 +122,21 @@ test("navigation redirects only blocked routes, including internal transitions",
     }
   }
 });
+
+test("hides modern search shelves and playable libraries without hiding regular results", async ({ page }) => {
+  await openFixture(page, `
+    <grid-shelf-view-model id="shorts-shelf"><h2>Shorts</h2><ytm-shorts-lockup-view-model-v2><ytm-shorts-lockup-view-model><a href="/shorts/1">clip</a></ytm-shorts-lockup-view-model></ytm-shorts-lockup-view-model-v2></grid-shelf-view-model>
+    <ytd-rich-section-renderer id="games-shelf"><ytd-rich-shelf-renderer><h2>Игры в браузере</h2><ytd-rich-item-renderer><ytd-mini-game-card-view-model><mini-game-card-view-model><a href="/playables/1">Играть</a></mini-game-card-view-model></ytd-mini-game-card-view-model></ytd-rich-item-renderer></ytd-rich-shelf-renderer></ytd-rich-section-renderer>
+    <ytd-shelf-renderer id="library"><h2>Ваша библиотека</h2><mini-game-card-view-model><button>Играть</button></mini-game-card-view-model></ytd-shelf-renderer>
+    <ytd-rich-item-renderer id="game-card"><ytd-mini-game-card-view-model><mini-game-card-view-model><a href="/playables/2">game</a></mini-game-card-view-model></ytd-mini-game-card-view-model></ytd-rich-item-renderer>
+    <ytd-guide-entry-renderer id="text-menu"><a role="link"><span>Shorts</span></a></ytd-guide-entry-renderer>
+    <ytd-mini-guide-entry-renderer id="aria-menu"><a aria-label="Shorts" role="link"></a></ytd-mini-guide-entry-renderer>
+    <ytd-video-renderer id="ordinary"><a href="/watch?v=1">Shorts</a></ytd-video-renderer>
+    <ytd-shelf-renderer id="ordinary-shelf"><h2>Ваша библиотека</h2><ytd-video-renderer><a href="/watch?v=2">games review</a></ytd-video-renderer></ytd-shelf-renderer>
+  `);
+  for (const id of ["shorts-shelf", "games-shelf", "library", "game-card", "text-menu", "aria-menu"]) {
+    await expect(page.locator(`#${id}`)).toBeHidden();
+  }
+  await expect(page.locator("#ordinary")).toBeVisible();
+  await expect(page.locator("#ordinary-shelf")).toBeVisible();
+});
