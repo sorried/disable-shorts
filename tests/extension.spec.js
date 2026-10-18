@@ -28,11 +28,18 @@ async function openFixture(page, markup) {
   }
 }
 
-test("manifest uses local scripts without extra permissions", () => {
+test("manifest declares settings, popup and raster icons", () => {
   expect(manifest.manifest_version).toBe(3);
   expect(manifest.permissions).toEqual(["storage"]);
   expect(manifest.author).toBe("github.com/sorried");
   expect(manifest.homepage_url).toBe("https://github.com/sorried");
+  expect(manifest.version).toBe("1.0.0");
+  expect(fs.existsSync(path.join(root, manifest.action.default_popup))).toBe(true);
+  for (const [size, filename] of Object.entries(manifest.icons)) {
+    const png = fs.readFileSync(path.join(root, filename));
+    expect(png.readUInt32BE(16)).toBe(Number(size));
+    expect(png.readUInt32BE(20)).toBe(Number(size));
+  }
   expect(manifest.content_scripts[0].run_at).toBe("document_start");
   for (const filename of [...manifest.content_scripts[0].css, ...manifest.content_scripts[0].js]) {
     expect(fs.existsSync(path.join(root, filename))).toBe(true);
@@ -58,6 +65,28 @@ test("loads the unpacked extension and injects scripts automatically", async () 
     await expect(page.locator("#normal")).toBeVisible();
     await page.goto("https://www.youtube.com/playables/123");
     await page.waitForURL("https://www.youtube.com/");
+    const manager = await context.newPage();
+    await manager.goto("chrome://extensions");
+    const item = manager.locator("extensions-item").first();
+    await expect(item).toBeAttached();
+    const extensionId = await item.getAttribute("id");
+    const popup = await context.newPage();
+    await popup.goto(`chrome-extension://${extensionId}/popup.html`);
+    const toggle = popup.getByRole("switch");
+    await expect(toggle).toBeEnabled();
+    await expect(toggle).toBeChecked();
+    await toggle.uncheck();
+    await expect(popup.getByRole("status")).toHaveText("выключено");
+    await expect(page.locator("#blocked")).toBeVisible();
+    await popup.reload();
+    await expect(popup.getByRole("switch")).not.toBeChecked();
+    await page.goto("https://www.youtube.com/shorts/123");
+    await expect(page).toHaveURL("https://www.youtube.com/shorts/123");
+    await expect(page.locator("#blocked")).toBeVisible();
+    await popup.getByRole("switch").check();
+    await expect(popup.getByRole("status")).toHaveText("включено");
+    await page.waitForURL("https://www.youtube.com/");
+    await expect(page.locator("#blocked")).toBeHidden();
   } finally {
     if (context) await context.close();
     fs.rmSync(profile, { recursive: true, force: true });
