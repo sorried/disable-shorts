@@ -6,7 +6,7 @@ const { execFileSync } = require("node:child_process");
 const root = path.resolve(__dirname, "..");
 const manifest = JSON.parse(fs.readFileSync(path.join(root, "manifest.json"), "utf8"));
 const output = path.join(root, "dist");
-const files = ["content.css", "content.js", "navigation.js", "settings.js", "popup.html", "popup.css", "popup.js", "icons", "LICENSE", "README.md", "README.en.md"];
+const files = ["content.css", "content.js", "navigation.js", "settings.js", "popup.html", "popup.css", "popup.js", "icons", "LICENSE", "README.md", "README.ru.md"];
 fs.mkdirSync(output, { recursive: true });
 
 for (const target of ["chromium", "firefox"]) {

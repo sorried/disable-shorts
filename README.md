@@ -1,106 +1,162 @@
 # disable shorts
 
-[русский](README.md) | [english](README.en.md)
+[english](README.md) | [русский](README.ru.md)
 
-расширение для chrome, которое скрывает shorts и встроенные игры youtube playables. работает без сборки и фонового процесса.
+a browser extension that hides youtube shorts and built-in playables. no build step or background process for installation. version `1.0.0.1`.
 
-разработчик: [github.com/sorried](https://github.com/sorried).
+developer: [github.com/sorried](https://github.com/sorried).
 
-## браузеры
+## browsers
 
-| браузер на компьютере | сборка и статус |
+| desktop browser | build and status |
 | --- | --- |
-| google chrome, chromium | `chromium.zip`, установка распакованной папки; автоматическая проверка в chromium |
-| microsoft edge | `chromium.zip`, совместимая сборка; отдельно в edge не проверялась |
-| brave | `chromium.zip`, совместимая сборка; отдельно в brave не проверялась |
-| opera, opera gx | `chromium.zip`, совместимая сборка; отдельно в opera не проверялась |
-| vivaldi | `chromium.zip`, совместимая сборка; отдельно в vivaldi не проверялась |
-| яндекс браузер | chromium-сборка, если версия разрешает загрузку распакованных расширений; гарантии установки нет |
-| firefox 142+ | `firefox.zip`, отдельный manifest и api; пока только временная установка без подписи mozilla |
-| safari | готовой сборки нет; нужен отдельный проект приложения и сборка через xcode на macos |
+| google chrome, chromium | `chromium.zip`, unpacked installation; automated integration test in chromium |
+| microsoft edge | chromium build; not individually tested in edge |
+| brave | chromium build; not individually tested in brave |
+| opera, opera gx | chromium build; not individually tested in opera |
+| vivaldi | chromium build; not individually tested in vivaldi |
+| yandex browser | chromium build only where unpacked installation is available; installation is not guaranteed |
+| firefox 142+ | separate firefox build and api support; unsigned, temporary installation only |
+| safari | no installable build; requires a separate application packaged using xcode on macos |
 
-используй актуальную стабильную версию браузера. минимальная версия движка chromium: 105. совместимость с движком не означает проверку во всех перечисленных браузерах. корпоративные политики могут запрещать режим разработчика или сторонние расширения. поддержка мобильных браузеров и приложения youtube в этот релиз не входит.
+use a current stable browser. the minimum chromium engine version is 105. shared engine compatibility does not mean every listed browser has been tested. managed browser policies may block sideloading. mobile browsers and the youtube app are outside this release's support.
 
-## установка
+## download and install
 
-нужен google chrome на компьютере, версия 105 или новее. chrome на телефоне не поддерживает установку этого расширения. покупать или устанавливать программы для разработки не нужно.
+you need google chrome 105 or later on a computer. chrome on phones does not support installing this extension. you do not need node.js, npm or any development tools to install it.
 
-1. открой [релиз v1.0.0.1](https://github.com/sorried/disable-shorts/releases/tag/v1.0.0.1).
-2. внизу страницы раскрой раздел **assets**, если он свёрнут. для chrome, edge, brave, opera и vivaldi скачай `disable-shorts-v1.0.0.1-chromium.zip`. для firefox скачай `disable-shorts-v1.0.0.1-firefox.zip`. не выбирай архивы `Source code`.
-3. найди скачанный архив в папке загрузок. распакуй его через контекстное меню: «извлечь всё», «распаковать» или аналогичный пункт твоей системы. не открывай zip как папку для установки.
-4. перемести распакованную папку в постоянное место, например в «документы». не удаляй её после установки: chrome продолжит загружать расширение из неё.
-5. открой новую вкладку chrome, введи `chrome://extensions` в адресную строку и нажми enter.
-6. включи «режим разработчика» в правом верхнем углу.
-7. нажми «загрузить распакованное расширение». выбери распакованную папку, внутри которой сразу виден файл `manifest.json`, и подтверди выбор. выбирать сам файл не нужно.
-8. на странице расширений появится `disable shorts and playables`, версия `1.0.0.1`. убедись, что его переключатель включён.
-9. обнови открытые вкладки youtube. shorts и встроенные игры должны скрыться.
+1. open the [v1.0.0.1 release](https://github.com/sorried/disable-shorts/releases/tag/v1.0.0.1).
+2. expand **assets** near the bottom of the page if needed. download `disable-shorts-v1.0.0.1-chromium.zip` for chrome, edge, brave, opera or vivaldi. choose `disable-shorts-v1.0.0.1-firefox.zip` for firefox. do not use the `Source code` archives.
+3. find the downloaded zip in your downloads folder. right-click it and choose your system's extract option, such as "Extract All". opening the zip as a folder is not enough.
+4. move the extracted folder somewhere permanent, such as your documents folder. do not delete it after installation: chrome loads the extension from that folder.
+5. open a new chrome tab, type `chrome://extensions` in the address bar and press enter.
+6. turn on "Developer mode" in the top-right corner.
+7. click "Load unpacked". select the extracted folder containing `manifest.json` directly inside it, then confirm. select the folder, not the manifest file itself.
+8. check that `disable shorts and playables`, version `1.0.0.1`, appears and its switch is on.
+9. reload your open youtube tabs. shorts and built-in games should disappear.
 
-если chrome пишет, что не найден файл манифеста, выбрана не та папка. открой её в проводнике: `manifest.json` должен лежать прямо внутри, а не ещё на один уровень глубже.
+if chrome says the manifest is missing, check the folder you selected. `manifest.json` must be directly inside it, not inside another nested folder.
 
-## другие chromium-браузеры
+## google chrome and chromium
 
-скачай и распакуй `chromium.zip`, как описано выше. дальше выбери свой браузер:
+the download and installation steps above apply to both browsers. use the chromium archive, not the firefox archive. in chromium, open `chrome://extensions` as well.
 
-| браузер | куда перейти |
-| --- | --- |
-| microsoft edge | `edge://extensions` |
-| brave | `brave://extensions` |
-| opera и opera gx | `opera://extensions` |
-| vivaldi | `vivaldi://extensions` |
-| яндекс браузер | `browser://extensions` |
+open the popup using the extensions button beside the address bar and select `disable shorts and playables`. pin it if you want a permanent toolbar button. to update, replace files in the same extracted folder, return to `chrome://extensions`, click the reload icon on its card and reload youtube. to uninstall, click "Remove" on that card.
 
-1. открой указанный адрес в своём браузере.
-2. включи «режим разработчика» (developer mode).
-3. нажми «загрузить распакованное расширение» (load unpacked), выбери папку с `manifest.json`.
-4. проверь, что расширение включено, и обнови вкладки youtube.
+## microsoft edge
 
-у яндекс браузера официально основной способ установки связан с каталогами chrome и opera, а также описана установка пакетов crx3. в этом релизе нет crx3 и публикации в каталогах. если кнопки загрузки распакованной папки нет или браузер блокирует расширение, этот способ в твоей версии недоступен. не отключай защиту браузера ради установки; используй другой браузер из таблицы.
+1. download `disable-shorts-v1.0.0.1-chromium.zip` from the release linked above.
+2. extract the zip into a permanent folder. check that `manifest.json` is directly inside it.
+3. open edge and enter `edge://extensions` in the address bar.
+4. enable "Developer mode". if the browser is managed and this option is unavailable, installation requires your administrator.
+5. click "Load unpacked", select the extracted folder and confirm.
+6. check that `disable shorts and playables` is enabled, then reload youtube tabs.
+7. click the extensions button beside the address bar and select the extension to open its switch. use the toolbar visibility option if you want its icon always visible.
+
+to update, replace files in the same folder, open `edge://extensions`, click "Reload" on its card and reload youtube. click "Remove" on that card to uninstall.
+
+## brave
+
+1. download `disable-shorts-v1.0.0.1-chromium.zip` and extract it into a permanent folder.
+2. open brave and enter `brave://extensions` in the address bar.
+3. enable "Developer mode", then click "Load unpacked".
+4. select the folder containing `manifest.json`, not the zip or the manifest file itself.
+5. check that the extension is enabled and reload youtube tabs.
+6. open brave's extensions menu beside the address bar and select `disable shorts and playables`. pin its button if desired.
+
+to update, replace files in the same folder, reload the extension on `brave://extensions` and reload youtube. use "Remove" on its card to uninstall. this extension does not require changing brave shields settings.
+
+## opera and opera gx
+
+these steps apply to both opera and opera gx on a computer.
+
+1. download `disable-shorts-v1.0.0.1-chromium.zip` and extract it into a permanent folder.
+2. open `opera://extensions` in opera or opera gx.
+3. enable "Developer mode" to reveal the developer installation controls.
+4. click "Load unpacked" or "Load unpacked extension", depending on the interface language and version.
+5. select the extracted folder containing `manifest.json` and confirm.
+6. check that the extension is enabled, then reload youtube tabs.
+7. open the browser's extensions menu and select `disable shorts and playables` to access the switch. use the pin option if available to keep it on the toolbar.
+
+to update, replace files in the same folder, return to `opera://extensions`, reload the extension and reload youtube. use the extension's remove control on that page to uninstall.
+
+## vivaldi
+
+1. download `disable-shorts-v1.0.0.1-chromium.zip` and extract it into a permanent folder.
+2. open `vivaldi://extensions`, or open the vivaldi menu, then tools, then extensions.
+3. enable "Developer mode" in the top-right corner.
+4. click "Load unpacked" and select the folder containing `manifest.json`.
+5. confirm installation, check that the extension is enabled and reload youtube tabs.
+6. click its toolbar button to open the switch. if hidden, expand the hidden extensions controls. alternatively, open quick commands and search for the extension's name.
+
+to update, replace files in the same folder, reload its card at `vivaldi://extensions` and reload youtube. click "Remove" on its card to uninstall.
+
+## yandex browser
+
+installation is conditional, not guaranteed. this project is not listed in the chrome or opera extension catalogs.
+
+1. download `disable-shorts-v1.0.0.1-chromium.zip` and extract it into a permanent folder.
+2. open `browser://extensions` in yandex browser.
+3. check whether your version provides "Developer mode" and "Load unpacked" controls.
+4. if both are available, enable developer mode, click "Load unpacked" and select the folder containing `manifest.json`.
+5. if installation succeeds, check that the extension is enabled and reload youtube tabs.
+6. open its toolbar button to access the switch. if the button is hidden, open the browser's extensions settings and look for its show-button option.
+
+if your version supports this installation, update by replacing files in the same folder and reloading the extension on `browser://extensions`, then reload youtube. removal is available on that page.
+
+yandex's official installation guidance focuses on the chrome and opera catalogs and also documents crx3 packages. this release has neither a crx3 package nor a store listing. if your browser has no unpacked installation button or blocks the extension, this installation route is unavailable in your version. do not disable browser security to install it; use another browser from the table.
 
 ## firefox
 
-1. скачай `disable-shorts-v1.0.0.1-firefox.zip` и распакуй его в отдельную папку. не выбирай chromium-сборку.
-2. в firefox 142 или новее открой `about:debugging#/runtime/this-firefox`.
-3. нажми «загрузить временное дополнение» (load temporary add-on).
-4. выбери файл `manifest.json` из распакованной firefox-папки.
-5. разреши доступ к youtube, если firefox запросит его. при необходимости открой `about:addons`, выбери расширение и проверь разрешения доступа к сайтам.
-6. обнови youtube. меню доступно через кнопку расширений firefox.
+1. download `disable-shorts-v1.0.0.1-firefox.zip` and extract it into a separate folder. do not use the chromium build.
+2. in firefox 142 or later, open `about:debugging#/runtime/this-firefox`.
+3. click "Load Temporary Add-on".
+4. select `manifest.json` inside the extracted firefox folder.
+5. allow access to youtube if requested. if needed, open `about:addons`, select the extension and check its website permissions.
+6. reload youtube. open the popup through firefox's extensions button.
 
-после перезапуска firefox временное дополнение удаляется, его нужно загрузить заново. для постоянной установки обычному firefox нужен подписанный mozilla пакет; этот релиз его не содержит. не отключай проверку подписей. код и css проверены в движке firefox на тестовых страницах, но полная установка firefox-дополнения автоматически не проверялась.
+to reload changed files, return to `about:debugging#/runtime/this-firefox`, find the extension and click "Reload", then reload youtube. to update from a new release, extract the new firefox archive and load its `manifest.json` again. to remove the temporary installation, use "Remove" on the debugging page or restart firefox. do not rename the zip to xpi and expect permanent installation: changing the filename does not sign it.
+
+temporary add-ons are removed when firefox restarts; load it again after restarting. permanent installation in regular firefox requires mozilla signing, which is not included in this release. do not disable signature checks. scripts and css are tested in the firefox engine using fixtures, but the full firefox add-on installation is not covered by automated integration tests.
 
 ## safari
 
-zip из релиза нельзя установить как safari-расширение. apple требует упаковку web extension в отдельное приложение через xcode. готового подписанного приложения здесь нет, поэтому safari пока не поддерживается. инструкции chromium и firefox к нему не подходят.
+the release zip cannot be installed as a safari extension. apple requires packaging the web extension inside an application using xcode. no signed application is provided, so safari is currently unsupported. chromium and firefox installation steps do not apply.
 
-## где найти меню
+## turn it on or off
 
-нажми значок пазла справа от адресной строки chrome и выбери `disable shorts and playables`. чтобы кнопка всегда была видна, нажми значок закрепления рядом с названием расширения.
+click the puzzle icon next to chrome's address bar, then select `disable shorts and playables`. click the pin beside its name to keep its icon visible in the toolbar.
 
-версия: `1.0.0.1`. если старые блоки остались, нажми обновление расширения и обнови все вкладки youtube. изменения в папке сами по себе не перезапускают уже подключённые скрипты.
+the black-and-white popup has one switch labeled «скрывать shorts и игры» (hide shorts and games). «включено» means on; «выключено» means off. blocking is on by default. your choice is stored locally and applies to open youtube tabs without reloading.
 
-при обновлении скачай новый архив, распакуй его и замени файлы в той же папке установки. затем открой `chrome://extensions`, нажми значок обновления на карточке расширения и обнови вкладки youtube. для удаления нажми «удалить» на его карточке.
+turning it off restores hidden elements and disables redirects. it cannot take you back to a page that has already redirected to youtube's homepage.
 
-## переключатель
+## what it hides
 
-нажми иконку shorts в панели расширений. в чёрно-белом меню один переключатель: «скрывать shorts и игры». по умолчанию он включён. состояние сохраняется между перезапусками браузера и применяется ко всем открытым вкладкам youtube без перезагрузки. выключение возвращает скрытые элементы и отключает перенаправления. оно не возвращает страницу, с которой расширение уже перенаправило на главную.
+- shorts and playables shelves, including supported search shelves and game libraries.
+- entries in expanded and compact navigation menus.
+- supported cards in search, recommendations, subscriptions and channel tabs.
+- content loaded while scrolling or navigating without a full page reload.
 
-## что скрывается
+direct visits to `/shorts`, `/playables`, `/playable`, `/feed/playables` and channel shorts tabs redirect to the homepage when blocking is enabled.
 
-- полки shorts и playables, отдельные карточки со ссылками на них.
-- пункты полного и компактного бокового меню.
-- shorts в поиске, рекомендациях, подписках и вкладках каналов, если карточки используют поддерживаемую разметку.
-- элементы, которые появляются при прокрутке и переходах без перезагрузки страницы.
+regular videos, including videos about games, stay visible. a short video using a `/watch` link is not hidden just because of its duration or title. link matching works across languages; navigation entries without links have additional english and russian label matching.
 
-прямые переходы на `/shorts`, `/playables`, `/playable`, `/feed/playables` и вкладки shorts каналов возвращают на главную youtube.
+youtube changes its markup and runs experiments. new layouts may need selector updates. not every layout or signed-in account variant has been tested.
 
-обычные видео, включая видео об играх, остаются. расширение не определяет shorts по длительности или названию: обычный ролик по адресу `/watch` не скрывается только из-за короткой продолжительности. обработка ссылок не зависит от языка; для пунктов меню без ссылки есть дополнительное распознавание английских и русских названий.
+## update or remove
 
-## приватность
+download a newer release, extract it and replace the files in the same installation folder. open `chrome://extensions`, click the reload icon on the extension's card and reload youtube tabs. replacing files alone does not restart scripts already running in a tab.
 
-расширение работает только на `youtube.com`, `www.youtube.com` и `m.youtube.com` по https. не отправляет запросов и не собирает статистику. разрешение `storage` используется только для локального сохранения переключателя. chrome предоставляет скриптам доступ к содержимому указанных сайтов, чтобы они могли скрывать элементы.
+to uninstall, click "Remove" on the extension's card at `chrome://extensions`.
 
-## проверка
+## privacy
 
-для разработки нужен node.js 20 или новее:
+the extension runs only on `youtube.com`, `www.youtube.com` and `m.youtube.com` over https. it sends no requests and collects no analytics. the `storage` permission saves only the on/off setting locally. chrome gives its content scripts access to these sites so they can hide elements.
+
+## development
+
+node.js 20 or later is required for development only:
 
 ```sh
 npm ci
@@ -110,17 +166,15 @@ npm test
 npm run package
 ```
 
-тесты проверяют manifest, скрытие меню и полок, подгрузку, повторное использование карточек, сохранение обычных видео и переходы с заблокированных страниц. отдельный тест запускает chromium с распакованным расширением и проверяет автоматическое подключение файлов. тестовые страницы используют локальную разметку, а не настоящий аккаунт youtube.
+tests cover filtering, lazy loading, recycled cards, navigation, popup settings and icons. an integration test loads the actual unpacked extension in chromium. automated tests use local fixtures rather than a signed-in youtube account.
 
-youtube меняет разметку и проводит эксперименты. новые варианты карточек могут потребовать обновления селекторов в `content.css` и `content.js`. мобильная разметка частично покрыта селекторами, но chrome на android не поддерживает установку этого расширения.
+license: `GPL-3.0-only`. see `LICENSE`.
 
-лицензия: `GPL-3.0-only`, полный текст в `LICENSE`.
+## installation references
 
-## источники по установке
-
-- [edge: загрузка распакованного расширения](https://learn.microsoft.com/en-us/microsoft-edge/extensions/getting-started/extension-sideloading).
-- [opera: режим разработчика](https://dev.opera.com/extensions/testing/).
-- [vivaldi: установка расширений](https://help.vivaldi.com/desktop/appearance-customization/extensions/).
-- [яндекс: расширения и ограничения установки](https://yandex.com/support/browser/en/personalization/extension.html).
-- [firefox: временная установка](https://extensionworkshop.com/documentation/develop/temporary-installation-in-firefox/).
-- [safari: упаковка web extension](https://developer.apple.com/documentation/safariservices/packaging-a-web-extension-for-safari).
+- [edge sideloading](https://learn.microsoft.com/en-us/microsoft-edge/extensions/getting-started/extension-sideloading).
+- [opera developer mode](https://dev.opera.com/extensions/testing/).
+- [vivaldi extensions](https://help.vivaldi.com/desktop/appearance-customization/extensions/).
+- [yandex extensions and installation restrictions](https://yandex.com/support/browser/en/personalization/extension.html).
+- [firefox temporary installation](https://extensionworkshop.com/documentation/develop/temporary-installation-in-firefox/).
+- [safari web extension packaging](https://developer.apple.com/documentation/safariservices/packaging-a-web-extension-for-safari).
