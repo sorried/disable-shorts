@@ -23,6 +23,8 @@ async function openFixture(page, markup) {
 test("manifest uses local scripts without extra permissions", () => {
   expect(manifest.manifest_version).toBe(3);
   expect(manifest.permissions).toBeUndefined();
+  expect(manifest.author).toBe("github.com/sorried");
+  expect(manifest.homepage_url).toBe("https://github.com/sorried");
   expect(manifest.content_scripts[0].run_at).toBe("document_start");
   for (const filename of [...manifest.content_scripts[0].css, ...manifest.content_scripts[0].js]) {
     expect(fs.existsSync(path.join(root, filename))).toBe(true);

@@ -1,7 +1,9 @@
 {
   "manifest_version": 3,
   "name": "disable shorts and playables",
-  "version": "1.0.0",
+  "version": "1.0.1",
+  "author": "github.com/sorried",
+  "homepage_url": "https://github.com/sorried",
   "description": "Hides YouTube Shorts and Playables from navigation, feeds and search.",
   "minimum_chrome_version": "105",
   "content_scripts": [
