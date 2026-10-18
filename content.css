@@ -1,4 +1,3 @@
-/* Dedicated shelves can be hidden before their links are populated. */
 :root[data-disable-shorts-enabled] :is(
 [data-disable-shorts-hidden],
 :is(ytd-guide-entry-renderer, ytd-mini-guide-entry-renderer):has([aria-label="Shorts" i], [aria-label="Playables" i], [title="Игры в браузере" i]),
